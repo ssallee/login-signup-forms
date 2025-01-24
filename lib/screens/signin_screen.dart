@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:login_signup/screens/calendar.dart';
+import 'package:login_signup/screens/home_screen.dart';
 import 'package:login_signup/screens/signup_screen.dart';
 import 'package:login_signup/widgets/custom_scaffold.dart';
 
@@ -140,7 +142,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           GestureDetector(
                             child: Text(
-                              'Forget password?',
+                              'Forgot password?',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: lightColorScheme.primary,
@@ -158,11 +160,14 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: () {
                             if (_formSignInKey.currentState!.validate() &&
                                 rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
+                                
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (e) => const CalendarPage(),
+                                      ),
+                                    );
+                                
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -171,7 +176,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               );
                             }
                           },
-                          child: const Text('Sign up'),
+                          child: const Text('Sign in'),
                         ),
                       ),
                       const SizedBox(
