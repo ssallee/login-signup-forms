@@ -16,7 +16,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   late DateTime _selectedDate;
   late DateTime _currentMonth;
   List<Event> _events = [];
-  final List<String> _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  final List<String> _weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 Future<void> _refreshEvents() async {
     final events = await _db.getEventsForDate(_selectedDate);
@@ -36,19 +36,22 @@ Future<void> _refreshEvents() async {
   List<DateTime> _getDaysInMonth() {
     final List<DateTime> days = [];
     final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
-    final firstWeekday = firstDayOfMonth.weekday;
+    // Convert weekday to 0-6 range where 0 is Sunday
+    final firstWeekday = firstDayOfMonth.weekday % 7;
     
-    for (int i = firstWeekday - 1; i > 0; i--) {
+    // Add previous month's days
+    for (int i = firstWeekday; i > 0; i--) {
       days.add(firstDayOfMonth.subtract(Duration(days: i)));
     }
     
+    // Add current month's days
     for (int i = 0; i < _daysInMonth(_currentMonth); i++) {
       days.add(DateTime(_currentMonth.year, _currentMonth.month, i + 1));
     }
     
-    int remainingDays = 42 - days.length;
-    for (int i = 1; i <= remainingDays; i++) {
-      days.add(DateTime(_currentMonth.year, _currentMonth.month + 1, i));
+    // Fill remaining days until we have 42 days (6 weeks)
+    while (days.length < 42) {
+      days.add(days.last.add(const Duration(days: 1)));
     }
     
     return days;
@@ -841,7 +844,7 @@ Future<void> _refreshEvents() async {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Events for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      'Events for ${_selectedDate.month}/${_selectedDate.day}/${_selectedDate.year}',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

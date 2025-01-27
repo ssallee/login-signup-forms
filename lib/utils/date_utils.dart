@@ -2,10 +2,11 @@ class CalendarUtils {
   static List<DateTime> getDaysInMonth(DateTime currentMonth) {
     final List<DateTime> days = [];
     final firstDayOfMonth = DateTime(currentMonth.year, currentMonth.month, 1);
-    final firstWeekday = firstDayOfMonth.weekday;
+    // Convert to 0-6 range where 0 is Sunday
+    final firstWeekday = firstDayOfMonth.weekday % 7;
     
     // Add previous month's days
-    for (int i = firstWeekday - 1; i > 0; i--) {
+    for (int i = firstWeekday; i > 0; i--) {
       days.add(firstDayOfMonth.subtract(Duration(days: i)));
     }
     
