@@ -8,6 +8,7 @@ class Event {
   final TimeOfDay? startTime;
   final TimeOfDay? endTime;
   final DateTime createdAt;
+  final bool isPriority; // Add this field
 
   Event({
     this.id,
@@ -17,6 +18,7 @@ class Event {
     this.startTime,
     this.endTime,
     DateTime? createdAt,
+    this.isPriority = false, // Add this parameter
   }) : createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
@@ -28,6 +30,7 @@ class Event {
       'startTime': startTime != null ? '${startTime!.hour}:${startTime!.minute}' : null,
       'endTime': endTime != null ? '${endTime!.hour}:${endTime!.minute}' : null,
       'createdAt': createdAt.toIso8601String(),
+      'isPriority': isPriority ? 1 : 0, // Add this field
     };
   }
 
@@ -46,6 +49,7 @@ class Event {
       startTime: parseTimeOfDay(map['startTime']),
       endTime: parseTimeOfDay(map['endTime']),
       createdAt: DateTime.parse(map['createdAt']),
+      isPriority: map['isPriority'] == 1, // Add this field
     );
   }
 }

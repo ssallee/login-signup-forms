@@ -10,43 +10,49 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return CustomScaffold(
-      child: Column(
-        children: [
-          Flexible(
-              flex: 8,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: 40.0,
-                ),
-                child: Center(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      children: [
-                        TextSpan(
-                            text: 'Welcome Back!\n',
-                            style: TextStyle(
-                              fontSize: 45.0,
-                              fontWeight: FontWeight.w600,
-                            )),
-                        TextSpan(
-                            text:
-                                '\nEnter personal details to your employee account',
-                            style: TextStyle(
-                              fontSize: 20,
-                              // height: 0,
-                            ))
-                      ],
+      child: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Add this
+          children: [
+            Flexible(
+                flex: 8,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: screenHeight * 0.02,
+                    horizontal: screenWidth * 0.1,
+                  ),
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                                text: 'Welcome Back!\n',
+                                style: TextStyle(
+                                  fontSize: screenHeight * 0.05, // 5% of screen height
+                                  fontWeight: FontWeight.w600,
+                                )),
+                            TextSpan(
+                                text:
+                                    '\nEnter personal details to your employee account',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  // height: 0,
+                                ))
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              )),
-          Flexible(
-            flex: 1,
-            child: Align(
-              alignment: Alignment.bottomRight,
+                )),
+            Container( // Replace Flexible with Container
+              padding: const EdgeInsets.only(bottom: 0), // Add padding at bottom
               child: Row(
                 children: [
                   const Expanded(
@@ -68,8 +74,8 @@ class WelcomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

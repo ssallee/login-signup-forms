@@ -84,147 +84,402 @@ Future<void> _refreshEvents() async {
     TimeOfDay? endTime;
     String title = '';
     String description = '';
+    String? titleError; // Add this for error handling
+    bool isPriority = false;
 
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevents dialog from closing when tapping outside
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: const Text('Add Event'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                ),
-                onChanged: (value) {
-                  title = value;
-                },
+        builder: (context, setState) => WillPopScope(
+          onWillPop: () async => false, // Prevents dialog from closing when back button is pressed
+          child: Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+                maxWidth: MediaQuery.of(context).size.width * 0.9,
               ),
-              const SizedBox(height: 16),
-              ListTile(
-                title: Text('Date: ${eventDate.year}-${eventDate.month}-${eventDate.day}'),
-                trailing: const Icon(Icons.calendar_today),
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: eventDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    eventDate = picked;
-                    setState(() {});
-                  }
-                },
-              ),
-              ListTile(
-                title: Text('Start Time: ${startTime?.format(context) ?? 'Not set'}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (startTime != null)
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppBar(
+                    title: const Text('Add Event'),
+                    automaticallyImplyLeading: false,
+                    actions: [
                       IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          setState(() {
-                            startTime = null;
-                            endTime = null; // Clear end time if start time is cleared
-                          });
-                        },
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    const Icon(Icons.access_time),
-                  ],
-                ),
-                onTap: () async {
-                  final TimeOfDay? picked = await showTimePicker(
-                    context: context,
-                    initialTime: const TimeOfDay(hour: 0, minute: 0),
-                    initialEntryMode: TimePickerEntryMode.input, // sets default to keyboard input mode
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      startTime = picked;
-                    });
-                  }
-                },
-              ),
-              if (startTime != null) // Only show end time if start time is set
-                ListTile(
-                  title: Text('End Time: ${endTime?.format(context) ?? 'Not set'}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (endTime != null)
-                        IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            setState(() {
-                              endTime = null;
-                            });
-                          },
-                        ),
-                      const Icon(Icons.access_time),
                     ],
                   ),
-                  onTap: () async {
-                    final TimeOfDay? picked = await showTimePicker(
-                      context: context,
-                      initialTime: const TimeOfDay(hour: 0, minute: 0),
-                      initialEntryMode: TimePickerEntryMode.input, // sets default to keyboard input mode
-                    );
-                    if (picked != null) {
-                      setState(() {
-                        endTime = picked;
-                      });
-                    }
-                  },
-                ),
-              TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                ),
-                onChanged: (value) {
-                  description = value;
-                },
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: 'Title',
+                              border: const OutlineInputBorder(),
+                              errorText: titleError, // Add error text
+                            ),
+                            onChanged: (value) {
+                              title = value;
+                              if (titleError != null) {
+                                setState(() => titleError = null);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          Card(
+                            child: ListTile(
+                              title: Text('Date: ${eventDate.year}-${eventDate.month}-${eventDate.day}'),
+                              trailing: const Icon(Icons.calendar_today),
+                              onTap: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: eventDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                );
+                                if (picked != null) {
+                                  setState(() => eventDate = picked);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Card(
+                            child: ListTile(
+                              title: Text('Start Time: ${startTime?.format(context) ?? 'Not set'}'),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (startTime != null)
+                                    IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () => setState(() {
+                                        startTime = null;
+                                        endTime = null;
+                                      }),
+                                    ),
+                                  const Icon(Icons.access_time),
+                                ],
+                              ),
+                              onTap: () async {
+                                final TimeOfDay? picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: startTime ?? TimeOfDay.now(),
+                                  initialEntryMode: TimePickerEntryMode.input,
+                                );
+                                if (picked != null) {
+                                  setState(() => startTime = picked);
+                                }
+                              },
+                            ),
+                          ),
+                          if (startTime != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Card(
+                                child: ListTile(
+                                  title: Text('End Time: ${endTime?.format(context) ?? 'Not set'}'),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (endTime != null)
+                                        IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () => setState(() => endTime = null),
+                                        ),
+                                      const Icon(Icons.access_time),
+                                    ],
+                                  ),
+                                  onTap: () async {
+                                    final TimeOfDay? picked = await showTimePicker(
+                                      context: context,
+                                      initialTime: endTime ?? startTime ?? TimeOfDay.now(),
+                                      initialEntryMode: TimePickerEntryMode.input,
+                                    );
+                                    if (picked != null) {
+                                      setState(() => endTime = picked);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            decoration: const InputDecoration(
+                              labelText: 'Description',
+                              border: OutlineInputBorder(),
+                              alignLabelWithHint: true,
+                            ),
+                            maxLines: 3,
+                            onChanged: (value) => description = value,
+                          ),
+                          const SizedBox(height: 16),
+                          SwitchListTile(
+                            title: const Text('High Priority'),
+                            value: isPriority,
+                            onChanged: (bool value) {
+                              setState(() => isPriority = value);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (title.trim().isEmpty) {
+                                setState(() => titleError = 'Title is required');
+                                return;
+                              }
+                              
+                              final event = Event(
+                                title: title.trim(),
+                                description: description,
+                                date: eventDate,
+                                startTime: startTime,
+                                endTime: endTime,
+                                isPriority: isPriority,
+                              );
+                              await _db.insertEvent(event);
+                              Navigator.pop(context);
+                              await _refreshEvents();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Text('Save Event'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final DateTime fullDateTime = DateTime(
-                  eventDate.year,
-                  eventDate.month,
-                  eventDate.day,
-                );
-                
-                final event = Event(
-                  title: title,
-                  description: description,
-                  date: fullDateTime,
-                  startTime: startTime,
-                  endTime: endTime,
-                );
-                await _db.insertEvent(event);
-                
-                Navigator.pop(context);
-                await _refreshEvents();
-                // Refresh events list
-                _loadEvents(_selectedDate).then((events) {
-                  setState(() {
-                    _events = events;
-                  });
-                });
-              },
-              child: const Text('Save'),
-            ),
-          ],
         ),
+      ),
+    );
+  }
+
+  void _editEvent(Event event) {
+    DateTime eventDate = event.date;
+    TimeOfDay? startTime = event.startTime;
+    TimeOfDay? endTime = event.endTime;
+    String title = event.title;
+    String description = event.description;
+    bool isPriority = event.isPriority; // Add this line
+    String? titleError;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => WillPopScope(
+          onWillPop: () async => false,
+          child: Dialog(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+                maxWidth: MediaQuery.of(context).size.width * 0.9,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppBar(
+                    title: const Text('Edit Event'),
+                    automaticallyImplyLeading: false,
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            decoration: InputDecoration(
+                              labelText: 'Title',
+                              border: const OutlineInputBorder(),
+                              errorText: titleError,
+                            ),
+                            controller: TextEditingController(text: title),
+                            onChanged: (value) {
+                              title = value;
+                              if (titleError != null) {
+                                setState(() => titleError = null);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          Card(
+                            child: ListTile(
+                              title: Text('Date: ${eventDate.year}-${eventDate.month}-${eventDate.day}'),
+                              trailing: const Icon(Icons.calendar_today),
+                              onTap: () async {
+                                final DateTime? picked = await showDatePicker(
+                                  context: context,
+                                  initialDate: eventDate,
+                                  firstDate: DateTime(2000),
+                                  lastDate: DateTime(2100),
+                                );
+                                if (picked != null) {
+                                  setState(() => eventDate = picked);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Card(
+                            child: ListTile(
+                              title: Text('Start Time: ${startTime?.format(context) ?? 'Not set'}'),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (startTime != null)
+                                    IconButton(
+                                      icon: const Icon(Icons.clear),
+                                      onPressed: () => setState(() {
+                                        startTime = null;
+                                        endTime = null;
+                                      }),
+                                    ),
+                                  const Icon(Icons.access_time),
+                                ],
+                              ),
+                              onTap: () async {
+                                final TimeOfDay? picked = await showTimePicker(
+                                  context: context,
+                                  initialTime: startTime ?? TimeOfDay.now(),
+                                  initialEntryMode: TimePickerEntryMode.input,
+                                );
+                                if (picked != null) {
+                                  setState(() => startTime = picked);
+                                }
+                              },
+                            ),
+                          ),
+                          if (startTime != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Card(
+                                child: ListTile(
+                                  title: Text('End Time: ${endTime?.format(context) ?? 'Not set'}'),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (endTime != null)
+                                        IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () => setState(() => endTime = null),
+                                        ),
+                                      const Icon(Icons.access_time),
+                                    ],
+                                  ),
+                                  onTap: () async {
+                                    final TimeOfDay? picked = await showTimePicker(
+                                      context: context,
+                                      initialTime: endTime ?? startTime ?? TimeOfDay.now(),
+                                      initialEntryMode: TimePickerEntryMode.input,
+                                    );
+                                    if (picked != null) {
+                                      setState(() => endTime = picked);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          const SizedBox(height: 16),
+                          TextField(
+                            decoration: const InputDecoration(
+                              labelText: 'Description',
+                              border: OutlineInputBorder(),
+                              alignLabelWithHint: true,
+                            ),
+                            controller: TextEditingController(text: description),
+                            maxLines: 3,
+                            onChanged: (value) => description = value,
+                          ),
+                          const SizedBox(height: 16),
+                          SwitchListTile( // Add this widget
+                            title: const Text('High Priority'),
+                            value: isPriority,
+                            onChanged: (bool value) {
+                              setState(() => isPriority = value);
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (title.trim().isEmpty) {
+                                setState(() => titleError = 'Title is required');
+                                return;
+                              }
+                              
+                              final updatedEvent = Event(
+                                id: event.id,
+                                title: title.trim(),
+                                description: description.trim(),
+                                date: eventDate,
+                                startTime: startTime,
+                                endTime: endTime,
+                                isPriority: isPriority, // Add this field
+                              );
+                              await _db.updateEvent(updatedEvent);
+                              Navigator.pop(context);
+                              await _refreshEvents();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: Text('Update Event'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _deleteEvent(Event event) async {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Event'),
+        content: const Text('Are you sure you want to delete this event?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _db.deleteEvent(event.id!);
+              Navigator.pop(context);
+              await _refreshEvents();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }
@@ -234,177 +489,206 @@ Future<void> _refreshEvents() async {
   }
 
   void _showMonthPicker() {
-  int selectedYear = _currentMonth.year;
-  int selectedMonthTemp = _currentMonth.month;
-  
-  showDialog(
-    context: context,
-    builder: (dialogContext) => StatefulBuilder(
-      builder: (context, setDialogState) => AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text('Select Month'),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
+    int selectedYear = _currentMonth.year;
+    int selectedMonthTemp = _currentMonth.month;
+    
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          contentPadding: const EdgeInsets.all(8),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Select Date', style: TextStyle(fontSize: 16)),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, size: 20),
+                    onPressed: () {
+                      setDialogState(() => selectedYear--);
+                    },
+                  ),
+                  Text(selectedYear.toString()),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward, size: 20),
+                    onPressed: () {
+                      setDialogState(() => selectedYear++);
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 2,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              itemCount: 12,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
                     setDialogState(() {
-                      selectedYear--;
+                      selectedMonthTemp = index + 1;
                     });
                   },
-                ),
-                Text(selectedYear.toString()),
-                IconButton(
-                  icon: const Icon(Icons.arrow_forward),
-                  onPressed: () {
-                    setDialogState(() {
-                      selectedYear++;
-                    });
-                  },
-                ),
-              ],
+                  child: Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: selectedMonthTemp == index + 1 ? Colors.blue.withOpacity(0.1) : null,
+                      border: Border.all(
+                        color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.grey,
+                        width: selectedMonthTemp == index + 1 ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _getMonthName(index + 1),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.black,
+                        fontWeight: selectedMonthTemp == index + 1 ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close'),
+            ),
+            TextButton(
+              onPressed: () {
+                final newDate = DateTime(selectedYear, selectedMonthTemp);
+                Navigator.pop(context);
+                setState(() {
+                  _currentMonth = newDate;
+                  _selectedDate = DateTime(
+                    selectedYear,
+                    selectedMonthTemp,
+                    min(_selectedDate.day, _daysInMonth(newDate))
+                  );
+                });
+              },
+              child: const Text('Confirm'),
             ),
           ],
         ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1.5,
-            ),
-            itemCount: 12,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  setDialogState(() {
-                    selectedMonthTemp = index + 1;
-                  });
-                },
-                child: Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: selectedMonthTemp == index + 1 ? Colors.blue.withOpacity(0.1) : null,
-                    border: Border.all(
-                      color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.grey,
-                      width: selectedMonthTemp == index + 1 ? 2 : 1,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _getMonthName(index + 1),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.black,
-                      fontWeight: selectedMonthTemp == index + 1 ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-          TextButton(
-            onPressed: () {
-              final newDate = DateTime(selectedYear, selectedMonthTemp);
-              Navigator.pop(context);
-              setState(() {
-                _currentMonth = newDate;
-                _selectedDate = DateTime(
-                  selectedYear,
-                  selectedMonthTemp,
-                  min(_selectedDate.day, _daysInMonth(newDate))
-                );
-              });
-            },
-            child: const Text('Confirm'),
-          ),
-        ],
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildEventList() {
-  return FutureBuilder<List<Event>>(
-    future: _loadEvents(_selectedDate),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-      
-      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(
-          child: Text('No events for this day', 
-            style: TextStyle(fontSize: 16, color: Colors.grey)
-          ),
-        );
-      }
-
-      return ListView.builder(
-        shrinkWrap: true,
-        itemCount: snapshot.data!.length,
-        itemBuilder: (context, index) {
-          final event = snapshot.data![index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: ListTile(
-              title: Text(event.title),
-              subtitle: event.description?.isNotEmpty == true 
-                ? Text(event.description!) 
-                : null,
-              trailing: event.startTime != null 
-                ? Text('${event.startTime!.format(context)}${event.endTime != null ? ' - ${event.endTime!.format(context)}' : ''}')
-                : null,
+  Widget _buildEventList() {
+    return FutureBuilder<List<Event>>(
+      future: _loadEvents(_selectedDate),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('No events for this day',
+              style: TextStyle(fontSize: 14, color: Colors.grey)
             ),
           );
-        },
-      );
-    },
-  );
-}
+        }
 
-/* DEBUGGING FUNCTION - UNCOMMENT TO USE
-Future<void> _debugDatabase() async {
-  try {
- 
-    // Test retrieve
-    final events = await _db.getEvents();
-    print('All events in database:');
-    for (var event in events) {
-      print('ID: ${event.id}, Title: ${event.title}, Description: ${event.description}, Date: ${event.date}');
-    }
-    
-    // Test date specific retrieval
-    final todayEvents = await _db.getEventsForDate(DateTime.now());
-    print('Events for today:');
-    for (var event in todayEvents) {
-      print('ID: ${event.id}, Title: ${event.title}');
-    }
-    
-  } catch (e) {
-    print('Database error: $e');
+        return ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            final event = snapshot.data![index];
+            return Card(
+              elevation: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: InkWell( // Wrap ListTile with InkWell
+                onLongPress: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.edit),
+                          title: const Text('Edit Event'),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _editEvent(event);
+                          },
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.delete, color: Colors.red),
+                          title: const Text('Delete Event', 
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            _deleteEvent(event);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: ListTile(
+                  dense: true,
+                  leading: event.isPriority
+                    ? const Icon(Icons.priority_high, color: Colors.red, size: 20)
+                    : null,
+                  title: Text(
+                    event.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: event.isPriority ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  subtitle: event.description?.isNotEmpty == true 
+                    ? Text(
+                        event.description!,
+                        style: const TextStyle(fontSize: 12),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : null,
+                  trailing: event.startTime != null 
+                    ? Text(
+                        '${event.startTime!.format(context)}${event.endTime != null ? '\n${event.endTime!.format(context)}' : ''}',
+                        style: const TextStyle(fontSize: 12),
+                        textAlign: TextAlign.right,
+                      )
+                    : null,
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
-}
-*/
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final calendarHeight = screenSize.height * 0.5; // 50% of screen height
+    
     return Scaffold(
       body: Column(
         children: [
-          // Existing calendar header and grid
+          // Calendar header
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -415,10 +699,10 @@ Future<void> _debugDatabase() async {
                 InkWell(
                   onTap: _showMonthPicker,
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: Text(
                       '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -429,86 +713,147 @@ Future<void> _debugDatabase() async {
               ],
             ),
           ),
+          // Weekday headers
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: _weekDays.map((day) => Text(
-                day,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Color(0xFF616161), // grey[700]
+              children: _weekDays.map((day) => Expanded(
+                child: Text(
+                  day,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Color(0xFF616161),
+                  ),
                 ),
               )).toList(),
             ),
           ),
           // Calendar grid
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  childAspectRatio: 1,
-                ),
-                itemCount: 42,
-                itemBuilder: (context, index) {
-                  final days = _getDaysInMonth();
-                  final day = days[index];
-                  final isCurrentMonth = day.month == _currentMonth.month;
-                  final isSelected = day.year == _selectedDate.year &&
-                      day.month == _selectedDate.month &&
-                      day.day == _selectedDate.day;
-                  
-                  final hasEvents = _events.any((event) =>
-                    event.date.year == day.year &&
-                    event.date.month == day.month &&
-                    event.date.day == day.day);
-                  
-                  final isToday = DateTime.now().year == day.year &&
-                      DateTime.now().month == day.month &&
-                      DateTime.now().day == day.day;
+          SizedBox(
+            height: calendarHeight,
+            child: GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                childAspectRatio: 1,
+                mainAxisSpacing: 2,
+                crossAxisSpacing: 2,
+              ),
+              itemCount: 42,
+              itemBuilder: (context, index) {
+                final days = _getDaysInMonth();
+                final day = days[index];
+                final isCurrentMonth = day.month == _currentMonth.month;
+                final isSelected = day.year == _selectedDate.year &&
+                    day.month == _selectedDate.month &&
+                    day.day == _selectedDate.day;
+                
+                final hasEvents = _events.any((event) =>
+                  event.date.year == day.year &&
+                  event.date.month == day.month &&
+                  event.date.day == day.day);
+                
+                final isToday = DateTime.now().year == day.year &&
+                    DateTime.now().month == day.month &&
+                    DateTime.now().day == day.day;
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedDate = day;
-                      });
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue : null,
-                        border: isToday ? Border.all(color: Colors.black, width: 1) : null,
-                        shape: isToday ? BoxShape.circle : BoxShape.rectangle,
-                        borderRadius: isToday ? null : BorderRadius.circular(8),
-                      ),
-                      child: Stack(
-                        children: [
-                          Center(
-                            child: Text(
-                              '${day.day}',
-                              style: TextStyle(
-                                color: isCurrentMonth
-                                    ? (isSelected ? Colors.white : Colors.black)
-                                    : Colors.grey,
-                              ),
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedDate = day;
+                    });
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.blue : null,
+                      border: isToday ? Border.all(color: Colors.black, width: 1) : null,
+                      shape: isToday ? BoxShape.circle : BoxShape.rectangle,
+                      borderRadius: isToday ? null : BorderRadius.circular(8),
+                    ),
+                    child: Stack(
+                      children: [
+                        Center(
+                          child: Text(
+                            '${day.day}',
+                            style: TextStyle(
+                              color: isCurrentMonth
+                                  ? (isSelected ? Colors.white : Colors.black)
+                                  : Colors.grey,
+                            ),
+                          ),
+                        ),
+                        if (hasEvents) ...[
+                          Positioned(
+                            bottom: 4,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FutureBuilder<List<Event>>(
+                                  future: _db.getEventsForDate(day),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) return Container();
+                                    
+                                    final hasPriorityEvent = snapshot.data!
+                                        .any((event) => event.isPriority);
+                                    
+                                    return Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : (hasPriorityEvent
+                                                ? Colors.red
+                                                : Colors.blue),
+                                        shape: hasPriorityEvent
+                                            ? BoxShape.rectangle
+                                            : BoxShape.circle,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ],
-                      ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
           ),
-          // New event list
+          // Event list
           Expanded(
-            flex: 1,
-            child: _buildEventList(),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Events for ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildEventList(),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

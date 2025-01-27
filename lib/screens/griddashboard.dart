@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_signup/screens/calendar.dart'; // Add this import
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
@@ -51,50 +52,62 @@ class GridDashboard extends StatelessWidget {
           crossAxisSpacing: 18,
           mainAxisSpacing: 18,
           children: myList.map((data) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Color(color), borderRadius: BorderRadius.circular(10)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    data.img,
-                    width: 42,
-                  ),
-                  SizedBox(
-                    height: 14,
-                  ),
-                  Text(
-                    data.title,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    data.subtitle,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  SizedBox(
-                    height: 14,
-                  ),
-                  Text(
-                    data.event,
-                    style: GoogleFonts.openSans(
-                        textStyle: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                ],
+            return InkWell( // Wrap Container with InkWell
+              onTap: () {
+                if (data.title == "Calendar") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CalendarPage(),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color(color), borderRadius: BorderRadius.circular(10)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      data.img,
+                      width: 42,
+                    ),
+                    SizedBox(
+                      height: 14,
+                    ),
+                    Text(
+                      data.title,
+                      style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      data.subtitle,
+                      style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                    SizedBox(
+                      height: 14,
+                    ),
+                    Text(
+                      data.event,
+                      style: GoogleFonts.openSans(
+                          textStyle: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
               ),
             );
           }).toList()),

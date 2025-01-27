@@ -20,7 +20,7 @@ class WelcomeButton extends StatelessWidget {
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0), // Reduce padding
         decoration: BoxDecoration(
           color: color!,
           borderRadius: const BorderRadius.only(

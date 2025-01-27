@@ -22,7 +22,7 @@ class DatabaseHelper {
     
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // Increment version number
       onCreate: (Database db, int version) async {
         await db.execute('''
           CREATE TABLE events (
@@ -32,9 +32,15 @@ class DatabaseHelper {
             date TEXT NOT NULL,
             startTime TEXT,
             endTime TEXT,
-            createdAt TEXT NOT NULL
+            createdAt TEXT NOT NULL,
+            isPriority INTEGER DEFAULT 0
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE events ADD COLUMN isPriority INTEGER DEFAULT 0');
+        }
       },
     );
   }
