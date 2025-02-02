@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_signup/screens/calendar.dart'; // Add this import
+import 'package:login_signup/screens/calendar.dart';
+import 'package:login_signup/screens/settings.dart'; // Add this import
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
       title: "Calendar",
       subtitle: "March, Wednesday",
       event: "3 Events",
-      img: "assets/calendar.png");
+      img: "assets/calendar.png",
+      onPressed: (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+      },
+  );
+  
 
   final Items item2 = Items(
     title: "Groceries",
@@ -38,6 +49,13 @@ class GridDashboard extends StatelessWidget {
     subtitle: "",
     event: "2 Items",
     img: "assets/setting.png",
+    onPressed: (BuildContext context) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Settings()),
+      );
+    },
   );
 
   @override
@@ -53,7 +71,7 @@ class GridDashboard extends StatelessWidget {
           mainAxisSpacing: 18,
           children: myList.map((data) {
             return InkWell( // Wrap Container with InkWell
-              onTap: () {
+              /* onTap: () {
                 if (data.title == "Calendar") {
                   Navigator.push(
                     context,
@@ -62,7 +80,7 @@ class GridDashboard extends StatelessWidget {
                     ),
                   );
                 }
-              },
+              }, */
               child: Container(
                 decoration: BoxDecoration(
                     color: Color(color), borderRadius: BorderRadius.circular(10)),
@@ -120,5 +138,7 @@ class Items {
   String subtitle;
   String event;
   String img;
-  Items({required this.title, required this.subtitle, required this.event, required this.img});
+  Items({required this.title, required this.subtitle, required this.event, required this.img, this.onPressed});
+
+  final void Function(BuildContext context)? onPressed;
 }
