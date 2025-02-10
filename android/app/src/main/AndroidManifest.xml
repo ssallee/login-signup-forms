@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    
 
     <!-- For Android 9 (API level 28) and lower -->
     <uses-permission
@@ -8,6 +9,9 @@
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    
     <application
         android:label="flutter_application_2"
         android:name="${applicationName}"

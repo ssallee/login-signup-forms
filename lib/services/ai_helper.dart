@@ -155,9 +155,11 @@ Please suggest the best time to work on this task.
 Consider:
 1. Task due date
 2. Priority level
-3. Avoiding conflicts with routines and existing events
-4. Scheduling during reasonable hours (8 AM - 8 PM)
-5. Allow enough time based on task complexity
+3. Never scheduling during routine times
+4. Avoiding conflicts with existing events
+5. Scheduling during reasonable hours (8 AM - 8 PM)
+6. Allow enough time based on task complexity
+7. Never schedule for past dates
 
 Respond in this JSON format only:
 {
