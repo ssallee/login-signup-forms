@@ -94,8 +94,8 @@ Future<void> _refreshEvents() async {
       context: context,
       barrierDismissible: false, // Prevents dialog from closing when tapping outside
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => WillPopScope(
-          onWillPop: () async => false, // Prevents dialog from closing when back button is pressed
+        builder: (context, setState) => PopScope(
+          canPop: false, // Prevents dialog from closing when back button is pressed
           child: Dialog(
             child: Container(
               constraints: BoxConstraints(
@@ -248,7 +248,9 @@ Future<void> _refreshEvents() async {
                                 isPriority: isPriority,
                               );
                               await _db.insertEvent(event);
-                              Navigator.pop(context);
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
                               await _refreshEvents();
                             },
                             child: const Padding(
@@ -282,8 +284,8 @@ Future<void> _refreshEvents() async {
       context: context,
       barrierDismissible: false,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => WillPopScope(
-          onWillPop: () async => false,
+        builder: (context, setState) => PopScope(
+          canPop: false,
           child: Dialog(
             child: Container(
               constraints: BoxConstraints(

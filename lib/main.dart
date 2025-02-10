@@ -19,7 +19,7 @@ void main() async {
     runApp(const MyApp());
   } catch (e) {
     debugPrint('Error initializing app: $e');
-    // Handle initialization error gracefully
+    // Handle initialization error 
     runApp(const ErrorApp());
   }
 }

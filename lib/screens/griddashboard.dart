@@ -1,24 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_signup/screens/calendar.dart';
-import 'package:login_signup/screens/settings.dart'; // Add this import
+import 'package:login_signup/screens/calendar.dart'; 
+import 'package:login_signup/screens/settings.dart';
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
       title: "Calendar",
       subtitle: "March, Wednesday",
       event: "3 Events",
-      img: "assets/calendar.png",
-      onPressed: (BuildContext context) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const CalendarPage(),
-          ),
-        );
-      },
-  );
-  
+      img: "assets/calendar.png");
 
   final Items item2 = Items(
     title: "Groceries",
@@ -49,14 +39,60 @@ class GridDashboard extends StatelessWidget {
     subtitle: "",
     event: "2 Items",
     img: "assets/setting.png",
-    onPressed: (BuildContext context) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Settings()),
-      );
-    },
   );
+
+  void _navHandler(BuildContext context, String title) {
+    switch (title) {
+      case "Calendar":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+        break;
+      case "Groceries":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+        break;
+      case "Locations":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+        break;
+      case "Activity":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+        break;
+      case "To do":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CalendarPage(),
+          ),
+        );
+        break;
+      case "Settings":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const SettingsPage(),
+          ),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,22 +101,13 @@ class GridDashboard extends StatelessWidget {
     return Flexible(
       child: GridView.count(
           childAspectRatio: 1.0,
-          padding: EdgeInsets.only(left: 16, right: 16),
+          padding: const EdgeInsets.only(left: 16, right: 16),
           crossAxisCount: 2,
           crossAxisSpacing: 18,
           mainAxisSpacing: 18,
           children: myList.map((data) {
             return InkWell( // Wrap Container with InkWell
-              /* onTap: () {
-                if (data.title == "Calendar") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CalendarPage(),
-                    ),
-                  );
-                }
-              }, */
+              onTap: () => _navHandler(context, data.title),
               child: Container(
                 decoration: BoxDecoration(
                     color: Color(color), borderRadius: BorderRadius.circular(10)),
@@ -91,7 +118,7 @@ class GridDashboard extends StatelessWidget {
                       data.img,
                       width: 42,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 14,
                     ),
                     Text(
@@ -138,7 +165,5 @@ class Items {
   String subtitle;
   String event;
   String img;
-  Items({required this.title, required this.subtitle, required this.event, required this.img, this.onPressed});
-
-  final void Function(BuildContext context)? onPressed;
+  Items({required this.title, required this.subtitle, required this.event, required this.img});
 }
