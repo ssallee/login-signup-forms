@@ -1,7 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiConfig {
-  static const String openAiKey = 'YOUR_OPENAI_API_KEY';
+  static String get openAiKey => 
+      dotenv.env['OPENAI_API_KEY'] ?? '';
   
   static bool get isConfigured => 
-      openAiKey.isNotEmpty && 
-      openAiKey != 'YOUR_OPENAI_API_KEY';
+      openAiKey.isNotEmpty;
 }

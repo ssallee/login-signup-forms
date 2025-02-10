@@ -3,6 +3,7 @@ import '../services/ai_helper.dart';
 import '../services/database_helper.dart';
 import '../models/event.dart';
 import 'routine_screen.dart';
+import '../config/api_config.dart';
 
 class AssistantPage extends StatefulWidget {
   const AssistantPage({super.key});
@@ -100,8 +101,16 @@ class _AssistantPageState extends State<AssistantPage> {
     setState(() => _isLoading = true);
     
     try {
+      if (!ApiConfig.isConfigured) {
+        throw Exception('OpenAI API key not configured. Please check your .env file.');
+      }
+
       final routines = await _dbHelper.getRoutines();
       final existingEvents = await _dbHelper.getEvents();
+      
+      print('Suggesting time for task: ${task.title}');
+      print('Found ${routines.length} routines and ${existingEvents.length} events');
+
       final suggestion = await _aiService.suggestTimeForTask(task, routines, existingEvents);
       
       if (!mounted) return;
@@ -162,12 +171,27 @@ class _AssistantPageState extends State<AssistantPage> {
           ],
         ),
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+    } catch (e, stackTrace) {
+      print('Error suggesting time: $e');
+      print('Stack trace: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            duration: const Duration(seconds: 10),
+            action: SnackBarAction(
+              label: 'Dismiss',
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
+          ),
+        );
+      }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
