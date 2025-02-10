@@ -22,34 +22,43 @@ class Event {
   }) : createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
+    String? timeToString(TimeOfDay? time) {
+      if (time == null) return null;
+      return '${time.hour}:${time.minute}';
+    }
+
     return {
       'id': id,
       'title': title,
       'description': description,
       'date': date.toIso8601String(),
-      'startTime': startTime != null ? '${startTime!.hour}:${startTime!.minute}' : null,
-      'endTime': endTime != null ? '${endTime!.hour}:${endTime!.minute}' : null,
+      'startTime': timeToString(startTime),
+      'endTime': timeToString(endTime),
       'createdAt': createdAt.toIso8601String(),
-      'isPriority': isPriority ? 1 : 0, // Add this field
+      'isPriority': isPriority ? 1 : 0,
     };
   }
 
   factory Event.fromMap(Map<String, dynamic> map) {
     TimeOfDay? parseTimeOfDay(String? timeString) {
-      if (timeString == null) return null;
-      final parts = timeString.split(':');
-      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+      if (timeString == null || timeString.isEmpty) return null;
+      try {
+        final parts = timeString.split(':');
+        return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+      } catch (e) {
+        return null;
+      }
     }
 
     return Event(
       id: map['id'],
-      title: map['title'],
-      description: map['description'],
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
       date: DateTime.parse(map['date']),
-      startTime: parseTimeOfDay(map['startTime']),
-      endTime: parseTimeOfDay(map['endTime']),
+      startTime: parseTimeOfDay(map['startTime']?.toString()),
+      endTime: parseTimeOfDay(map['endTime']?.toString()),
       createdAt: DateTime.parse(map['createdAt']),
-      isPriority: map['isPriority'] == 1, // Add this field
+      isPriority: map['isPriority'] == 1,
     );
   }
 }

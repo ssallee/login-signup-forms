@@ -3,25 +3,14 @@ import 'package:login_signup/screens/welcome_screen.dart';
 import 'package:login_signup/theme/theme.dart';
 import '../services/database_helper.dart';
 
-/* void main() {
-  runApp(const MyApp());
-} */
-
 void main() async {
-  try {
-    // Ensure Flutter bindings are initialized
-    WidgetsFlutterBinding.ensureInitialized();
-    
-    // Create singleton instance of DatabaseHelper
-    final dbHelper = DatabaseHelper();
-    await dbHelper.initDatabase();
-    
-    runApp(const MyApp());
-  } catch (e) {
-    debugPrint('Error initializing app: $e');
-    // Handle initialization error 
-    runApp(const ErrorApp());
-  }
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize database
+  final dbHelper = DatabaseHelper();
+  await dbHelper.initDatabase();
+  
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

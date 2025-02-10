@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/event.dart';
+import '../models/routine.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -32,7 +33,20 @@ class DatabaseHelper {
             date TEXT NOT NULL,
             startTime TEXT,
             endTime TEXT,
-            createdAt TEXT NOT NULL
+            createdAt TEXT NOT NULL,
+            isPriority INTEGER DEFAULT 0
+          )
+        ''');
+
+        await db.execute('''
+          CREATE TABLE routines (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT,
+            daysOfWeek TEXT NOT NULL,
+            startTime TEXT NOT NULL,
+            endTime TEXT NOT NULL,
+            isActive INTEGER DEFAULT 1
           )
         ''');
       },
@@ -89,5 +103,45 @@ class DatabaseHelper {
   Future<void> deleteAllEvents() async {
     final Database db = await database;
     await db.delete('events');
+  }
+
+  Future<int> insertRoutine(Routine routine) async {
+    final Database db = await database;
+    return await db.insert('routines', routine.toMap());
+  }
+
+  Future<List<Routine>> getRoutines() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('routines');
+    return List.generate(maps.length, (i) => Routine.fromMap(maps[i]));
+  }
+
+  Future<List<Routine>> getRoutinesForDay(int weekday) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('routines');
+    return maps
+        .map((map) => Routine.fromMap(map))
+        .where((routine) => 
+            routine.isActive && routine.daysOfWeek.contains(weekday))
+        .toList();
+  }
+
+  Future<int> updateRoutine(Routine routine) async {
+    final Database db = await database;
+    return await db.update(
+      'routines',
+      routine.toMap(),
+      where: 'id = ?',
+      whereArgs: [routine.id],
+    );
+  }
+
+  Future<int> deleteRoutine(int id) async {
+    final Database db = await database;
+    return await db.delete(
+      'routines',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

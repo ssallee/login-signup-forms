@@ -4,7 +4,7 @@ import 'griddashboard.dart';
 
 class Home extends StatefulWidget {
   @override
-  HomeState createState() => new HomeState();
+  HomeState createState() =>  HomeState();
 }
 
 class HomeState extends State<Home> {

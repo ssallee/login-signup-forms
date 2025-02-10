@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_signup/screens/calendar.dart'; 
 import 'package:login_signup/screens/settings.dart';
+import 'package:login_signup/screens/assistant_screen.dart';
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
@@ -41,6 +42,8 @@ class GridDashboard extends StatelessWidget {
     img: "assets/setting.png",
   );
 
+  
+
   void _navHandler(BuildContext context, String title) {
     switch (title) {
       case "Calendar":
@@ -79,7 +82,7 @@ class GridDashboard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CalendarPage(),
+            builder: (context) => const AssistantPage(),
           ),
         );
         break;
