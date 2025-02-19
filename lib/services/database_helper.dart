@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/event.dart';
 import '../models/routine.dart';
+import 'package:flutter/material.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -60,6 +61,68 @@ class DatabaseHelper {
       event.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<List<Event>> getAllEvents() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('events');
+    
+    return List.generate(maps.length, (i) {
+      return Event(
+        id: maps[i]['id'],
+        title: maps[i]['title'],
+        description: maps[i]['description'] ?? '',
+        date: DateTime.parse(maps[i]['date']),
+        startTime: maps[i]['startTimeHour'] != null
+            ? TimeOfDay(
+                hour: maps[i]['startTimeHour'],
+                minute: maps[i]['startTimeMinute'],
+              )
+            : null,
+        endTime: maps[i]['endTimeHour'] != null
+            ? TimeOfDay(
+                hour: maps[i]['endTimeHour'],
+                minute: maps[i]['endTimeMinute'],
+              )
+            : null,
+        isPriority: maps[i]['isPriority'] == 1,
+      );
+    });
+  }
+
+  Future<List<Event>> getFutureEvents() async {
+    final db = await database;
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day).toIso8601String();
+    
+    final List<Map<String, dynamic>> maps = await db.query(
+      'events',
+      where: 'date >= ?',
+      whereArgs: [todayStart],
+      orderBy: 'date ASC',
+    );
+    
+    return List.generate(maps.length, (i) {
+      return Event(
+        id: maps[i]['id'],
+        title: maps[i]['title'],
+        description: maps[i]['description'] ?? '',
+        date: DateTime.parse(maps[i]['date']),
+        startTime: maps[i]['startTimeHour'] != null
+            ? TimeOfDay(
+                hour: maps[i]['startTimeHour'],
+                minute: maps[i]['startTimeMinute'],
+              )
+            : null,
+        endTime: maps[i]['endTimeHour'] != null
+            ? TimeOfDay(
+                hour: maps[i]['endTimeHour'],
+                minute: maps[i]['endTimeMinute'],
+              )
+            : null,
+        isPriority: maps[i]['isPriority'] == 1,
+      );
+    });
   }
 
   Future<List<Event>> getEvents() async {
