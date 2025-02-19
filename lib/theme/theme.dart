@@ -6,7 +6,7 @@ const lightColorScheme = ColorScheme(
   onPrimary: Color(0xFFFFFFFF),
   secondary: Color(0xFF6EAEE7),
   onSecondary: Color(0xFFFFFFFF),
-  error: Color(0xFFBA1A1A),
+  error: Color(0xFFB00020),
   onError: Color(0xFFFFFFFF),
   background: Color(0xFFFCFDF6),
   onBackground: Color(0xFF1A1C18),
@@ -14,6 +14,7 @@ const lightColorScheme = ColorScheme(
   outlineVariant: Color(0xFFC2C8BC),
   surface: Color(0xFFF9FAF3),
   onSurface: Color(0xFF1A1C18),
+  outline: Colors.black12,
 );
 
 const darkColorScheme = ColorScheme(
@@ -22,14 +23,15 @@ const darkColorScheme = ColorScheme(
   onPrimary: Color(0xFFFFFFFF),
   secondary: Color(0xFF6EAEE7),
   onSecondary: Color(0xFFFFFFFF),
-  error: Color(0xFFBA1A1A),
-  onError: Color(0xFFFFFFFF),
-  background: Color(0xFFFCFDF6),
-  onBackground: Color(0xFF1A1C18),
+  error: Color(0xFFCF6679),
+  onError: Color(0xFF000000),
+  background: Color(0xFF121212),
+  onBackground: Color(0xFFFFFFFF),
   shadow: Color(0xFF000000),
   outlineVariant: Color(0xFFC2C8BC),
-  surface: Color(0xFFF9FAF3),
-  onSurface: Color(0xFF1A1C18),
+  surface: Color(0xFF121212),
+  onSurface: Color(0xFFFFFFFF),
+  outline: Color(0xFFC2C8BC),
 );
 
 ThemeData lightMode = ThemeData(
@@ -38,15 +40,15 @@ ThemeData lightMode = ThemeData(
   colorScheme: lightColorScheme,
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(
+      backgroundColor: WidgetStateProperty.all<Color>(
         lightColorScheme.primary, // Slightly darker shade for the button
       ),
       foregroundColor:
-          MaterialStateProperty.all<Color>(Colors.white), // text color
-      elevation: MaterialStateProperty.all<double>(5.0), // shadow
-      padding: MaterialStateProperty.all<EdgeInsets>(
+          WidgetStateProperty.all<Color>(Colors.white), // text color
+      elevation: WidgetStateProperty.all<double>(5.0), // shadow
+      padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.symmetric(horizontal: 20, vertical: 18)),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16), // Adjust as needed
         ),
@@ -59,4 +61,22 @@ ThemeData darkMode = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: darkColorScheme,
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.all<Color>(
+        lightColorScheme.primary, // Slightly darker shade for the button
+      ),
+      foregroundColor:
+          WidgetStateProperty.all<Color>(Colors.black), // text color
+      elevation: WidgetStateProperty.all<double>(5.0), // shadow
+      padding: WidgetStateProperty.all<EdgeInsets>(
+          const EdgeInsets.symmetric(horizontal: 20, vertical: 18)),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16), // Adjust as needed
+        ),
+      ),
+    ),
+  ),
 );
+

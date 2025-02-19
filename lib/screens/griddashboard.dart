@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:login_signup/screens/calendar.dart'; 
 import 'package:login_signup/screens/settings.dart';
 import 'package:login_signup/screens/assistant_screen.dart';
+import 'package:login_signup/theme/theme.dart';
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
@@ -128,7 +129,7 @@ class GridDashboard extends StatelessWidget {
                       data.title,
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
-                              color: Colors.white,
+                              color: lightColorScheme.onSurface,
                               fontSize: 16,
                               fontWeight: FontWeight.w600)),
                     ),
@@ -139,7 +140,7 @@ class GridDashboard extends StatelessWidget {
                       data.subtitle,
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
-                              color: Colors.white38,
+                              color: lightColorScheme.onSurface,
                               fontSize: 10,
                               fontWeight: FontWeight.w600)),
                     ),
@@ -150,7 +151,7 @@ class GridDashboard extends StatelessWidget {
                       data.event,
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
-                              color: Colors.white70,
+                              color: lightColorScheme.onSurface,
                               fontSize: 11,
                               fontWeight: FontWeight.w600)),
                     ),
