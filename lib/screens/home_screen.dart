@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'griddashboard.dart';
+import 'package:login_signup/theme/theme.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff392850),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: <Widget>[
           SizedBox(
@@ -29,7 +30,7 @@ class HomeState extends State<Home> {
                       "Johny s Family",
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 18,
                               fontWeight: FontWeight.bold)),
                     ),
@@ -40,7 +41,7 @@ class HomeState extends State<Home> {
                       "Home",
                       style: GoogleFonts.openSans(
                           textStyle: TextStyle(
-                              color: Color(0xffa29aac),
+                                color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 14,
                               fontWeight: FontWeight.w600)),
                     ),
