@@ -686,199 +686,310 @@ Future<void> _refreshEvents() async {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final calendarHeight = screenSize.height * 0.5; // 50% of screen height
+    final calendarHeight = screenSize.height * 0.6; // Increased to 60% of screen height
     
     return Scaffold(
-      body: Column(
+      body: Stack(
         children: [
-          // Calendar header
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
-                  onPressed: _previousMonth,
-                ),
-                InkWell(
-                  onTap: _showMonthPicker,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Column(
+            children: [
+              // Calendar header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: _previousMonth,
                     ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
-                  onPressed: _nextMonth,
-                ),
-              ],
-            ),
-          ),
-          // Weekday headers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: _weekDays.map((day) => Expanded(
-                child: Text(
-                  day,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Color(0xFF616161),
-                  ),
-                ),
-              )).toList(),
-            ),
-          ),
-          // Calendar grid
-          SizedBox(
-            height: calendarHeight,
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                childAspectRatio: 1,
-                mainAxisSpacing: 2,
-                crossAxisSpacing: 2,
-              ),
-              itemCount: 42,
-              itemBuilder: (context, index) {
-                final days = _getDaysInMonth();
-                final day = days[index];
-                final isCurrentMonth = day.month == _currentMonth.month;
-                final isSelected = day.year == _selectedDate.year &&
-                    day.month == _selectedDate.month &&
-                    day.day == _selectedDate.day;
-                
-                final hasEvents = _events.any((event) =>
-                  event.date.year == day.year &&
-                  event.date.month == day.month &&
-                  event.date.day == day.day);
-                
-                final isToday = DateTime.now().year == day.year &&
-                    DateTime.now().month == day.month &&
-                    DateTime.now().day == day.day;
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedDate = day;
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue : null,
-                      border: isToday ? Border.all(color: Colors.black, width: 1) : null,
-                      shape: isToday ? BoxShape.circle : BoxShape.rectangle,
-                      borderRadius: isToday ? null : BorderRadius.circular(8),
-                    ),
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Text(
-                            '${day.day}',
-                            style: TextStyle(
-                              color: isCurrentMonth
-                                  ? (isSelected ? Colors.white : Colors.black)
-                                  : Colors.grey,
-                            ),
-                          ),
+                    InkWell(
+                      onTap: _showMonthPicker,
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        if (hasEvents) ...[
-                          Positioned(
-                            bottom: 4,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: _nextMonth,
+                    ),
+                  ],
+                ),
+              ),
+              // Weekday headers
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: _weekDays.map((day) => Expanded(
+                    child: Text(
+                      day,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Color(0xFF616161),
+                      ),
+                    ),
+                  )).toList(),
+                ),
+              ),
+              // Calendar grid
+              SizedBox(
+                height: calendarHeight,
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    childAspectRatio: 1,
+                    mainAxisSpacing: 2,
+                    crossAxisSpacing: 2,
+                  ),
+                  itemCount: 42,
+                  itemBuilder: (context, index) {
+                    final days = _getDaysInMonth();
+                    final day = days[index];
+                    final isCurrentMonth = day.month == _currentMonth.month;
+                    final isSelected = day.year == _selectedDate.year &&
+                        day.month == _selectedDate.month &&
+                        day.day == _selectedDate.day;
+                    
+                    final isToday = DateTime.now().year == day.year &&
+                        DateTime.now().month == day.month &&
+                        DateTime.now().day == day.day;
+
+                    return FutureBuilder<List<Event>>(
+                      future: _db.getEventsForDate(day),
+                      builder: (context, snapshot) {
+                        bool hasHighPriority = false;
+                        bool hasEvents = false;
+                        
+                        if (snapshot.hasData) {
+                          hasHighPriority = snapshot.data!.any((event) => event.isPriority);
+                          hasEvents = snapshot.data!.isNotEmpty;
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedDate = day;
+                            });
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: isSelected 
+                                  ? Colors.blue 
+                                  : hasHighPriority 
+                                      ? Colors.red.withOpacity(0.2)
+                                      : hasEvents 
+                                          ? Colors.green.withOpacity(0.2)
+                                          : null,
+                              border: isToday 
+                                  ? Border.all(color: Colors.black, width: 1)
+                                  : hasHighPriority
+                                      ? Border.all(color: Colors.red, width: 1)
+                                      : hasEvents
+                                          ? Border.all(color: Colors.green, width: 1)
+                                          : null,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Stack(
                               children: [
-                                FutureBuilder<List<Event>>(
-                                  future: _db.getEventsForDate(day),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) return Container();
-                                    
-                                    final hasPriorityEvent = snapshot.data!
-                                        .any((event) => event.isPriority);
-                                    
-                                    return Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : (hasPriorityEvent
-                                                ? Colors.red
-                                                : Colors.blue),
-                                        shape: hasPriorityEvent
-                                            ? BoxShape.rectangle
-                                            : BoxShape.circle,
-                                      ),
-                                    );
-                                  },
+                                Center(
+                                  child: Text(
+                                    '${day.day}',
+                                    style: TextStyle(
+                                      color: !isCurrentMonth 
+                                          ? Colors.grey
+                                          : isSelected
+                                              ? Colors.white
+                                              : hasHighPriority
+                                                  ? Colors.red
+                                                  : Colors.black,
+                                      fontWeight: hasHighPriority || hasEvents
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
                                 ),
+                                if (hasHighPriority || hasEvents)
+                                  Positioned(
+                                    top: 4,
+                                    right: 4,
+                                    child: hasHighPriority
+                                        ? Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.red,
+                                              
+                                              shape: BoxShape.rectangle, 
+                                              
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 8,
+                                            height: 8,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.green,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                  ),
                               ],
                             ),
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // Event list
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Events for ${_selectedDate.month}/${_selectedDate.day}/${_selectedDate.year}',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+            ],
+          ),
+          // Sliding Bottom Sheet
+          DraggableScrollableSheet(
+            initialChildSize: 0.3,
+            minChildSize: 0.3,
+            maxChildSize: 0.8,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 7,
+                      offset: const Offset(0, -3),
+                    ),
+                  ],
+                ),
+                child: CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          // Drag handle
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          // Events header
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Events for ${_selectedDate.month}/${_selectedDate.day}/${_selectedDate.year}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: _buildEventList(),
-                  ),
-                ],
-              ),
-            ),
+                    // Events list
+                    FutureBuilder<List<Event>>(
+                      future: _loadEvents(_selectedDate),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const SliverFillRemaining(
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return const SliverFillRemaining(
+                            child: Center(
+                              child: Text('No events for this day',
+                                style: TextStyle(fontSize: 14, color: Colors.grey)
+                              ),
+                            ),
+                          );
+                        }
+
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) => Card(
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              child: InkWell(
+                                onLongPress: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          leading: const Icon(Icons.edit),
+                                          title: const Text('Edit Event'),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            _editEvent(snapshot.data![index]);
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: const Icon(Icons.delete, color: Colors.red),
+                                          title: const Text('Delete Event', 
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            _deleteEvent(snapshot.data![index]);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: ListTile(
+                                  leading: snapshot.data![index].isPriority
+                                    ? const Icon(Icons.priority_high, color: Colors.red)
+                                    : null,
+                                  title: Text(
+                                    snapshot.data![index].title,
+                                    style: TextStyle(
+                                      fontWeight: snapshot.data![index].isPriority ? FontWeight.bold : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: Text(snapshot.data![index].description),
+                                  trailing: snapshot.data![index].startTime != null
+                                    ? Text(snapshot.data![index].startTime!.format(context))
+                                    : null,
+                                ),
+                              ),
+                            ),
+                            childCount: snapshot.data!.length,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          /* DEBUGGING BUTTONS - UNCOMMENT TO USE
-          FloatingActionButton(
-            onPressed: _debugDatabase,
-            heroTag: 'debug',
-            child: const Icon(Icons.bug_report),
-          ),
-          const SizedBox(height: 8),
-          */
-          FloatingActionButton(
-            onPressed: _addEvent,
-            heroTag: 'add',
-            child: const Icon(Icons.add),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addEvent,
+        child: const Icon(Icons.add),
+      
       ),
     );
   }
