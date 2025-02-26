@@ -23,7 +23,7 @@ class SettingsPage extends StatelessWidget {
           SettingsSection(
             title: Text('Section'),
             tiles: [
-              SettingsTile(
+              /* SettingsTile(
                 title: Text('Language'),
                 description: Text('English'),
                 leading: Icon(Icons.language),
@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
                       builder: (context) => LanguageScreen()),
                   ); */
                 },
-              ),
+              ), */
               SettingsTile(
                 title: Text('Theme'),
                 description: Text(mode),

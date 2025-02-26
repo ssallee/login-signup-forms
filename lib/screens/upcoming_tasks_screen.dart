@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/event.dart';
 import '../services/database_helper.dart';
 import 'home_screen.dart';
+import 'package:login_signup/theme/theme.dart';
 
 class UpcomingTasksScreen extends StatefulWidget {
   const UpcomingTasksScreen({super.key});
@@ -223,14 +224,15 @@ class _UpcomingTasksScreenState extends State<UpcomingTasksScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Tasks',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+        items:  [
+            BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today, color: Theme.of(context).colorScheme.primary),
+            label: 'Tasks', // Change the color of the text
+            backgroundColor: Theme.of(context).colorScheme.primary, // Change the background color of the text
+            ),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Theme.of(context).colorScheme.onSurface),
+            label: 'Home', 
           ),
         ],
         onTap: (index) {

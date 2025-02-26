@@ -27,7 +27,7 @@ const darkColorScheme = ColorScheme(
   onError: Color(0xFF000000),
   background: Color(0xFF121212),
   onBackground: Color(0xFFFFFFFF),
-  shadow: Color(0xFF000000),
+  shadow: Color(0xFF416FDF),
   outlineVariant: Color(0xFFC2C8BC),
   surface: Color(0xFF121212),
   onSurface: Color(0xFFFFFFFF),
@@ -67,7 +67,7 @@ ThemeData darkMode = ThemeData(
         lightColorScheme.primary, // Slightly darker shade for the button
       ),
       foregroundColor:
-          WidgetStateProperty.all<Color>(Colors.black), // text color
+          WidgetStateProperty.all<Color>(Colors.white), // text color
       elevation: WidgetStateProperty.all<double>(5.0), // shadow
       padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.symmetric(horizontal: 20, vertical: 18)),
@@ -75,6 +75,9 @@ ThemeData darkMode = ThemeData(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16), // Adjust as needed
         ),
+      ),
+      shadowColor: WidgetStateProperty.all(
+        darkColorScheme.primary, // Increase opacity
       ),
     ),
   ),

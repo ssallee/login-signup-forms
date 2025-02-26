@@ -548,9 +548,9 @@ Future<void> _refreshEvents() async {
                     alignment: Alignment.center,
                     margin: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: selectedMonthTemp == index + 1 ? Colors.blue.withOpacity(0.1) : null,
+                      color: selectedMonthTemp == index + 1 ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
                       border: Border.all(
-                        color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.grey,
+                        color: selectedMonthTemp == index + 1 ? Theme.of(context).colorScheme.primary : Colors.grey,
                         width: selectedMonthTemp == index + 1 ? 2 : 1,
                       ),
                       borderRadius: BorderRadius.circular(8),
@@ -559,7 +559,7 @@ Future<void> _refreshEvents() async {
                       _getMonthName(index + 1),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: selectedMonthTemp == index + 1 ? Colors.blue : Colors.black,
+                        color: selectedMonthTemp == index + 1 ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface,
                         fontWeight: selectedMonthTemp == index + 1 ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
@@ -783,14 +783,14 @@ Future<void> _refreshEvents() async {
                             margin: const EdgeInsets.all(2),
                             decoration: BoxDecoration(
                               color: isSelected 
-                                  ? Colors.blue 
+                                  ? Theme.of(context).colorScheme.primary 
                                   : hasHighPriority 
                                       ? Colors.red.withOpacity(0.2)
                                       : hasEvents 
                                           ? Colors.green.withOpacity(0.2)
                                           : null,
                               border: isToday 
-                                  ? Border.all(color: Colors.black, width: 1)
+                                  ? Border.all(color: Theme.of(context).colorScheme.outline, width: 1)
                                   : hasHighPriority
                                       ? Border.all(color: Colors.red, width: 1)
                                       : hasEvents
@@ -810,7 +810,7 @@ Future<void> _refreshEvents() async {
                                               ? Colors.white
                                               : hasHighPriority
                                                   ? Colors.red
-                                                  : Colors.black,
+                                                  : Theme.of(context).colorScheme.primary,
                                       fontWeight: hasHighPriority || hasEvents
                                           ? FontWeight.bold
                                           : FontWeight.normal,
@@ -860,7 +860,7 @@ Future<void> _refreshEvents() async {
             builder: (context, scrollController) {
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   boxShadow: [
                     BoxShadow(

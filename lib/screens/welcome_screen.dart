@@ -67,7 +67,7 @@ class WelcomeScreen extends StatelessWidget {
                     child: WelcomeButton(
                       buttonText: 'Sign up',
                       onTap: const SignUpScreen(),
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       textColor: lightColorScheme.primary,
                     ),
                   ),

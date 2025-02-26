@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:login_signup/screens/calendar.dart'; 
+import 'package:login_signup/screens/calendar.dart';
+import 'package:login_signup/screens/chat_screen.dart'; 
 import 'package:login_signup/screens/settings.dart';
 import 'package:login_signup/screens/assistant_screen.dart';
+import 'package:login_signup/screens/chat_screen.dart';
 import 'package:login_signup/theme/theme.dart';
 
 class GridDashboard extends StatelessWidget {
@@ -13,7 +15,7 @@ class GridDashboard extends StatelessWidget {
       img: "assets/calendar.png");
 
   final Items item2 = Items(
-    title: "Groceries",
+    title: "Chat",
     subtitle: "Bocali, Apple",
     event: "4 Items",
     img: "assets/food.png",
@@ -55,11 +57,11 @@ class GridDashboard extends StatelessWidget {
           ),
         );
         break;
-      case "Groceries":
+      case "Chat":
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CalendarPage(),
+            builder: (context) => ChatPage(),
           ),
         );
         break;
