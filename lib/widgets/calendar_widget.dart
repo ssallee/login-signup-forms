@@ -785,16 +785,16 @@ Future<void> _refreshEvents() async {
                               color: isSelected 
                                   ? Theme.of(context).colorScheme.primary 
                                   : hasHighPriority 
-                                      ? Colors.red.withOpacity(0.2)
+                                      ? Theme.of(context).colorScheme.error.withOpacity(0.2)
                                       : hasEvents 
-                                          ? Colors.green.withOpacity(0.2)
+                                          ? Theme.of(context).colorScheme.secondary.withOpacity(0.2)
                                           : null,
                               border: isToday 
-                                  ? Border.all(color: Theme.of(context).colorScheme.outline, width: 1)
+                                  ? Border.all(color: Colors.black, width: 1)
                                   : hasHighPriority
-                                      ? Border.all(color: Colors.red, width: 1)
+                                      ? Border.all(color: Theme.of(context).colorScheme.error, width: 1)
                                       : hasEvents
-                                          ? Border.all(color: Colors.green, width: 1)
+                                          ? Border.all(color: Theme.of(context).colorScheme.secondary, width: 1)
                                           : null,
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -805,12 +805,12 @@ Future<void> _refreshEvents() async {
                                     '${day.day}',
                                     style: TextStyle(
                                       color: !isCurrentMonth 
-                                          ? Colors.grey
+                                          ? Theme.of(context).colorScheme.onBackground.withOpacity(0.5)
                                           : isSelected
-                                              ? Colors.white
+                                              ? Theme.of(context).colorScheme.onPrimary
                                               : hasHighPriority
                                                   ? Colors.red
-                                                  : Theme.of(context).colorScheme.primary,
+                                                  : Colors.black,
                                       fontWeight: hasHighPriority || hasEvents
                                           ? FontWeight.bold
                                           : FontWeight.normal,
@@ -864,7 +864,7 @@ Future<void> _refreshEvents() async {
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.shadow.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 7,
                       offset: const Offset(0, -3),
@@ -883,7 +883,7 @@ Future<void> _refreshEvents() async {
                             width: 40,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: Theme.of(context).colorScheme.outline,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -892,9 +892,10 @@ Future<void> _refreshEvents() async {
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
                               'Events for ${_selectedDate.month}/${_selectedDate.day}/${_selectedDate.year}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ),

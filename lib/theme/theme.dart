@@ -27,7 +27,7 @@ const darkColorScheme = ColorScheme(
   onError: Color(0xFF000000),
   background: Color(0xFF121212),
   onBackground: Color(0xFFFFFFFF),
-  shadow: Color(0xFF416FDF),
+  shadow: Color(0xFF000000),
   outlineVariant: Color(0xFFC2C8BC),
   surface: Color(0xFF121212),
   onSurface: Color(0xFFFFFFFF),
