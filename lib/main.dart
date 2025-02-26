@@ -5,21 +5,24 @@ import '../services/database_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 import 'package:login_signup/screens/settings.dart';
 import 'package:provider/provider.dart';
+import '../config/api_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    await dotenv.load();
-    print('API Key loaded: ${dotenv.env['OPENAI_API_KEY']?.substring(0, 5)}...');
-    
+    await ApiConfig.initialize();
     final dbHelper = DatabaseHelper();
     await dbHelper.initDatabase();
+    
+    if (!ApiConfig.isConfigured) {
+      print('Warning: OpenAI API key not configured');
+    }
     
     runApp(const MyApp());
   } catch (e) {
     print('Error during initialization: $e');
-    runApp(const MyApp());
+    runApp(const ErrorApp());
   }
 }
 

@@ -19,19 +19,21 @@ const lightColorScheme = ColorScheme(
 
 const darkColorScheme = ColorScheme(
   brightness: Brightness.dark,
-  primary: Color(0xFF416FDF),
-  onPrimary: Color(0xFFFFFFFF),
-  secondary: Color(0xFF6EAEE7),
-  onSecondary: Color(0xFFFFFFFF),
-  error: Color(0xFFCF6679),
-  onError: Color(0xFF000000),
-  background: Color(0xFF121212),
-  onBackground: Color(0xFFFFFFFF),
+  primary: Color(0xFF6B8EE8),      // Lighter blue for dark mode
+  onPrimary: Color(0xFF000000),    // Black text on primary
+  secondary: Color(0xFF82B7E9),     // Lighter secondary
+  onSecondary: Color(0xFF000000),   // Black text on secondary
+  error: Color(0xFFCF6679),        // Material design error color
+  onError: Color(0xFF000000),      // Black text on error
+  background: Color(0xFF121212),    // Material dark background
+  onBackground: Color(0xFFFFFFFF),  // White text on background
+  surface: Color(0xFF1E1E1E),      // Slightly lighter than background
+  onSurface: Color(0xFFFFFFFF),    // White text on surface
+  outline: Color(0xFF2C2C2C),      // Dark grey for outlines
+  surfaceVariant: Color(0xFF252525),// For cards and elevated surfaces
+  onSurfaceVariant: Color(0xFFFFFFFF),
   shadow: Color(0xFF000000),
-  outlineVariant: Color(0xFFC2C8BC),
-  surface: Color(0xFF121212),
-  onSurface: Color(0xFFFFFFFF),
-  outline: Color(0xFFC2C8BC),
+  outlineVariant: Color(0xFF2C2C2C),
 );
 
 ThemeData lightMode = ThemeData(

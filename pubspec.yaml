@@ -75,6 +75,7 @@ flutter:
     - assets/map.png
     - assets/setting.png
     - assets/todo.png
+    - .env
   #  - .env
   #   - images/a_dot_ham.jpeg
 
