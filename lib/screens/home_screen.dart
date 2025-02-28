@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_signup/screens/calendar.dart';
+import 'package:login_signup/screens/chat_screen.dart';
 import 'package:login_signup/screens/settings.dart';
 import 'package:login_signup/screens/assistant_screen.dart';
 import 'package:login_signup/theme/theme.dart';
@@ -23,13 +24,13 @@ class HomePageState extends State<HomePage> {
         title: const Text("My Awesome App"),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        /* decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Colors.blue, Colors.teal],
           ),
-        ),
+        ), */
         child: Column(
           children: <Widget>[
             const SizedBox(height: 20),
@@ -167,6 +168,18 @@ class HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) => const SettingsPage(),
+          ),
+        ),
+      ),
+      Items(
+        title: "Chat",
+        subtitle: "Rose favirited your Post",
+        event: "",
+        img: "assets/festival.png",
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>  ChatPage(),
           ),
         ),
       ),

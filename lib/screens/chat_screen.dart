@@ -23,7 +23,7 @@ class _ChatPageState extends State<ChatPage> {
 
       // Send message to backend
       var response = await http.post(
-        Uri.parse('http://localhost:3000/'), // Replace with your actual backend endpoint
+        Uri.parse('https://capstonebackend-5am6.onrender.com/'), // Replace with your actual backend endpoint
         body: jsonEncode({'message': _textController.text}),
         headers: {"Content-Type": "application/json"},
       );

@@ -77,7 +77,7 @@ ThemeData darkMode = ThemeData(
         ),
       ),
       shadowColor: WidgetStateProperty.all(
-        darkColorScheme.primary, // Increase opacity
+        Color.fromARGB(255, 142, 166, 226), // Increase opacity
       ),
     ),
   ),
