@@ -5,6 +5,7 @@ import 'package:login_signup/screens/settings.dart';
 import 'package:login_signup/screens/assistant_screen.dart';
 import 'package:login_signup/theme/theme.dart';
 import  'daily_schedule_planner.dart';
+import 'upcoming_tasks_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -150,9 +151,12 @@ class HomePageState extends State<HomePage> {
         subtitle: "Rose favirited your Post",
         event: "",
         img: "assets/festival.png",
-        onTap: () {
-          // Add navigation logic for Activity
-        },
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UpcomingTasksScreen(),
+          ),
+        ),
       ),
       Items(
         title: "Settings",
