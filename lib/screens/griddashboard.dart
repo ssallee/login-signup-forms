@@ -6,6 +6,7 @@ import 'package:login_signup/screens/settings.dart';
 import 'package:login_signup/screens/assistant_screen.dart';
 import 'package:login_signup/screens/chat_screen.dart';
 import 'package:login_signup/theme/theme.dart';
+import 'daily_schedule_planner.dart';
 
 class GridDashboard extends StatelessWidget {
   final Items item1 =  Items(
@@ -77,7 +78,7 @@ class GridDashboard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CalendarPage(),
+            builder: (context) => const DailySchedulePlanner(),
           ),
         );
         break;

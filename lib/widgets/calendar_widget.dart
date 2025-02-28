@@ -805,13 +805,14 @@ Future<void> _refreshEvents() async {
                                     '${day.day}',
                                     style: TextStyle(
                                       color: !isCurrentMonth 
-                                          ? Theme.of(context).colorScheme.onBackground.withOpacity(0.5)
+                                          ? Theme.of(context).colorScheme.onBackground.withOpacity(0.4)
                                           : isSelected
                                               ? Theme.of(context).colorScheme.onPrimary
                                               : hasHighPriority
-                                                  ? Colors.red
-                                                  : Colors.black,
-                                      fontWeight: hasHighPriority || hasEvents
+                                                  ? Theme.of(context).colorScheme.error
+                                                  : Theme.of(context).colorScheme.onBackground,
+                                      fontSize: 14,
+                                      fontWeight: hasHighPriority || hasEvents || isSelected || isToday
                                           ? FontWeight.bold
                                           : FontWeight.normal,
                                     ),
