@@ -222,7 +222,7 @@ class _UpcomingTasksScreenState extends State<UpcomingTasksScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      /* bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         items:  [
             BottomNavigationBarItem(
@@ -245,7 +245,7 @@ class _UpcomingTasksScreenState extends State<UpcomingTasksScreen> {
             );
           }
         },
-      ),
+      ), */
     );
   }
 }

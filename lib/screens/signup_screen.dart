@@ -4,6 +4,7 @@ import 'package:login_signup/screens/signin_screen.dart';
 import 'package:login_signup/screens/upcoming_tasks_screen.dart';
 import 'package:login_signup/theme/theme.dart';
 import 'package:login_signup/widgets/custom_scaffold.dart';
+import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -191,7 +192,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const UpcomingTasksScreen(),
+                                      builder: (context) => const HomePage(),
                                     ),
                                   );
                             } else if (!agreePersonalData) {

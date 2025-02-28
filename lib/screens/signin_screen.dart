@@ -3,6 +3,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:login_signup/screens/upcoming_tasks_screen.dart';
 import 'package:login_signup/screens/signup_screen.dart';
 import 'package:login_signup/widgets/custom_scaffold.dart';
+import 'home_screen.dart';
 
 import '../theme/theme.dart';
 
@@ -162,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (e) => const UpcomingTasksScreen(),
+                                    builder: (e) => const HomePage(),
                                   ),
                                 );
                             } else if (!rememberPassword) {
