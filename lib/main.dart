@@ -22,7 +22,7 @@ void main() async {
     runApp(const MyApp());
   } catch (e) {
     print('Error during initialization: $e');
-    runApp(const ErrorApp());
+    runApp(const MyApp());
   }
 }
 

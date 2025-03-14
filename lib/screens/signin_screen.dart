@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-//import 'package:icons_plus/icons_plus.dart';
+import 'package:login_signup/services/auth_service.dart';
 import 'package:login_signup/screens/signup_screen.dart';
+import 'package:login_signup/screens/home_screen.dart';
 import 'package:login_signup/widgets/custom_scaffold.dart';
-import 'home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../theme/theme.dart';
 
@@ -15,7 +16,50 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool rememberPassword = true;
+  bool isLoading = false;
+  String? errorMessage;
+
+  // ✅ Function to handle login
+  Future<void> _login() async {
+    if (!_formSignInKey.currentState!.validate()) return;
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    final response = await AuthService.signIn(
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    setState(() {
+      isLoading = false;
+      if (response.containsKey("token")) {
+        _saveToken(response["token"]); // ✅ Save token locally
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login Successful!")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (e) => const HomePage()), // ✅ Navigate to HomePage
+        );
+      } else {
+        errorMessage = response["error"] ?? "Login failed";
+      }
+    });
+  }
+
+  // ✅ Function to save token in SharedPreferences
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("authToken", token);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -23,9 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(
-              height: 10,
-            ),
+            child: SizedBox(height: 10),
           ),
           Expanded(
             flex: 7,
@@ -52,16 +94,11 @@ class _SignInScreenState extends State<SignInScreen> {
                           color: lightColorScheme.primary,
                         ),
                       ),
-                      const SizedBox(
-                        height: 40.0,
-                      ),
+                      const SizedBox(height: 40.0),
                       TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Email';
-                          }
-                          return null;
-                        },
+                        controller: _emailController, // ✅ Added controller
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter Email' : null,
                         decoration: InputDecoration(
                           label: const Text('Email'),
                           hintText: 'Enter Email',
@@ -69,54 +106,55 @@ class _SignInScreenState extends State<SignInScreen> {
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                           border: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
                       TextFormField(
+                        controller: _passwordController, // ✅ Added controller
                         obscureText: true,
                         obscuringCharacter: '*',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
-                          }
-                          return null;
-                        },
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter Password' : null,
                         decoration: InputDecoration(
                           label: const Text('Password'),
                           hintText: 'Enter Password',
-                          hintStyle:  TextStyle(
+                          hintStyle: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
+                            borderSide: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outline, // Default border color
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -131,10 +169,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                 },
                                 activeColor: lightColorScheme.primary,
                               ),
-                               Text(
+                              Text(
                                 'Remember me',
                                 style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                             ],
@@ -150,84 +189,24 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignInKey.currentState!.validate() &&
-                                rememberPassword) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (e) => const HomePage(),
-                                  ),
-                                );
-                            } else if (!rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
-                              );
-                            }
-                          },
-                          child: const Text('Sign in'),
+                          onPressed: isLoading ? null : _login, // ✅ Call login function
+                          child: isLoading
+                              ? const CircularProgressIndicator() // ✅ Show loading indicator
+                              : const Text('Sign in'),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      /* Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              'Sign up with',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Logo(Logos.facebook_f),
-                          Logo(Logos.twitter),
-                          Logo(Logos.google),
-                          Logo(Logos.apple),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ), */
-                      // don't have an account
+                      if (errorMessage != null)
+                        Text(errorMessage!,
+                            style: const TextStyle(color: Colors.red)),
+                      const SizedBox(height: 25.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                           Text(
+                          Text(
                             'Don\'t have an account? ',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
@@ -252,9 +231,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),

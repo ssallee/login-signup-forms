@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-//import 'package:icons_plus/icons_plus.dart';
+import 'package:login_signup/services/auth_service.dart';
 import 'package:login_signup/screens/signin_screen.dart';
+import 'package:login_signup/screens/home_screen.dart';
 import 'package:login_signup/theme/theme.dart';
 import 'package:login_signup/widgets/custom_scaffold.dart';
-import 'home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,7 +15,52 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool agreePersonalData = true;
+  bool isLoading = false;
+  String? errorMessage;
+
+  // ✅ Function to handle sign-up
+  Future<void> _signup() async {
+    if (!_formSignupKey.currentState!.validate()) return;
+
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    final response = await AuthService.signUp(
+      _nameController.text,
+      _emailController.text,
+      _passwordController.text,
+    );
+
+    setState(() {
+      isLoading = false;
+      if (response.containsKey("token")) {
+        _saveToken(response["token"]); // ✅ Save token locally
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Sign-up Successful! Logging in...")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (e) => const HomePage()), // ✅ Navigate to HomePage
+        );
+      } else {
+        errorMessage = response["error"] ?? "Sign-up failed";
+      }
+    });
+  }
+
+  // ✅ Function to save token in SharedPreferences
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("authToken", token);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -22,9 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(
-              height: 10,
-            ),
+            child: SizedBox(height: 10),
           ),
           Expanded(
             flex: 7,
@@ -38,13 +82,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                // get started form
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // get started text
                       Text(
                         'Get Started',
                         style: TextStyle(
@@ -53,105 +95,52 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           color: lightColorScheme.primary,
                         ),
                       ),
-                      const SizedBox(
-                        height: 40.0,
-                      ),
-                      // full name
+                      const SizedBox(height: 40.0),
+                      // Full Name
                       TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Full name';
-                          }
-                          return null;
-                        },
+                        controller: _nameController, // ✅ Added controller
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter Full Name' : null,
                         decoration: InputDecoration(
                           label: const Text('Full Name'),
                           hintText: 'Enter Full Name',
-                          hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
                           border: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      // email
+                      const SizedBox(height: 25.0),
+                      // Email
                       TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Email';
-                          }
-                          return null;
-                        },
+                        controller: _emailController, // ✅ Added controller
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter Email' : null,
                         decoration: InputDecoration(
                           label: const Text('Email'),
                           hintText: 'Enter Email',
-                          hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
                           border: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      // password
+                      const SizedBox(height: 25.0),
+                      // Password
                       TextFormField(
+                        controller: _passwordController, // ✅ Added controller
                         obscureText: true,
                         obscuringCharacter: '*',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
-                          }
-                          return null;
-                        },
+                        validator: (value) =>
+                            value!.isEmpty ? 'Please enter Password' : null,
                         decoration: InputDecoration(
                           label: const Text('Password'),
                           hintText: 'Enter Password',
-                          hintStyle: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.outline, // Default border color
-                            ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      // i agree to the processing
+                      const SizedBox(height: 25.0),
+                      // Agree to Terms
                       Row(
                         children: [
                           Checkbox(
@@ -165,9 +154,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           Text(
                             'I agree to the processing of ',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
                           ),
                           Text(
                             'Personal data',
@@ -178,91 +164,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      // signup button
+                      const SizedBox(height: 25.0),
+                      // Sign Up Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignupKey.currentState!.validate() &&
-                                agreePersonalData) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const HomePage(),
-                                    ),
-                                  );
-                            } else if (!agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
-                              );
-                            }
-                          },
-                          child: const Text('Sign up'),
+                          onPressed: isLoading ? null : _signup, // ✅ Call sign-up function
+                          child: isLoading
+                              ? const CircularProgressIndicator() // ✅ Show loading indicator
+                              : const Text('Sign up'),
                         ),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      // sign up divider
-                      /* Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              'Sign up with',
-                              style: TextStyle(
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      // sign up social media logo
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Logo(Logos.facebook_f),
-                          Logo(Logos.twitter),
-                          Logo(Logos.google),
-                          Logo(Logos.apple),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ), */
-                      // already have an account
+                      if (errorMessage != null)
+                        Text(errorMessage!,
+                            style: const TextStyle(color: Colors.red)),
+                      const SizedBox(height: 30.0),
+                      // Already have an account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -283,9 +205,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),
