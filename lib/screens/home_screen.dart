@@ -115,7 +115,7 @@ class HomePageState extends State<HomePage> {
         title: "Calendar",
         subtitle: "March, Wednesday",
         event: "3 Events",
-        img: "assets/calendar.png",
+
         icon: Icons.calendar_today_rounded,
         onTap: () => Navigator.push(
           context,
@@ -128,7 +128,6 @@ class HomePageState extends State<HomePage> {
         title: "AI Chat",
         subtitle: "Chat with our AI assistant",
         event: "",
-        img: "assets/map.png",
         icon: Icons.chat_rounded,
         onTap: () => Navigator.push(
           context,
@@ -141,7 +140,6 @@ class HomePageState extends State<HomePage> {
         title: "Daily Schedule",
         subtitle: "Daily Schedule Planner",
         event: "",
-        img: "assets/map.png",
         icon: Icons.location_on,
         onTap: () => Navigator.push(
           context,
@@ -154,7 +152,6 @@ class HomePageState extends State<HomePage> {
         title: "Activity",
         subtitle: "Upcoming Tasks",
         event: "",
-        img: "assets/festival.png",
         icon: Icons.calendar_today_outlined,
         onTap: () => Navigator.push(
           context,
@@ -167,7 +164,6 @@ class HomePageState extends State<HomePage> {
         title: "Settings",
         subtitle: "",
         event: "",
-        img: "assets/setting.png",
         icon: Icons.settings,
         onTap: () => Navigator.push(
           context,
@@ -180,7 +176,6 @@ class HomePageState extends State<HomePage> {
         title: "Assistant",
         subtitle: "Assistant Page",
         event: "",
-        img: "assets/festival.png",
         icon: Icons.calendar_today_rounded,
         onTap: () => Navigator.push(
           context,
@@ -216,10 +211,6 @@ class HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              /* Image.asset(
-                data.img,
-                width: 42,
-              ), */
               Icon(data.icon as IconData?, size: 42),
               const SizedBox(height: 14),
               Text(
@@ -266,7 +257,6 @@ class Items {
   String title;
   String subtitle;
   String event;
-  String img;
   IconData icon;
   VoidCallback onTap;
 
@@ -274,7 +264,6 @@ class Items {
     required this.title,
     required this.subtitle,
     required this.event,
-    required this.img,
     required this.icon,
     required this.onTap,
   });
