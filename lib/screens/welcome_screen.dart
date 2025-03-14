@@ -37,12 +37,14 @@ class WelcomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: screenHeight * 0.05, // 5% of screen height
                                   fontWeight: FontWeight.w600,
+                                  color: Theme.of(context).colorScheme.onPrimary
                                 )),
-                            const TextSpan(
+                            TextSpan(
                                 text:
                                     '\nEnter personal details to your employee account',
                                 style: TextStyle(
                                   fontSize: 20,
+                                  color: Theme.of(context).colorScheme.onPrimary
                                   // height: 0,
                                 ))
                           ],
@@ -55,12 +57,12 @@ class WelcomeScreen extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 0), // Add padding at bottom
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: WelcomeButton(
                       buttonText: 'Sign in',
-                      onTap: SignInScreen(),
+                      onTap: const SignInScreen(),
                       color: Colors.transparent,
-                      textColor: Colors.white,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   Expanded(

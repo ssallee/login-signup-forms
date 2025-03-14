@@ -16,14 +16,14 @@ class _ChatPageState extends State<ChatPage> {
       // Add user message to the list
       setState(() {
         _messages.add({
-          'sender': 'user',
+          'sender': 'User',
           'text': _textController.text,
         });
       });
 
       // Send message to backend
       var response = await http.post(
-        Uri.parse('https://capstonebackend-5am6.onrender.com/'), // Replace with your actual backend endpoint
+        Uri.parse('https://capstonebackend-5am6.onrender.com/gemini/chat'), // Replace with your actual backend endpoint
         body: jsonEncode({'message': _textController.text}),
         headers: {"Content-Type": "application/json"},
       );
@@ -35,8 +35,8 @@ class _ChatPageState extends State<ChatPage> {
         // Add AI message to the list
         setState(() {
           _messages.add({
-            'sender': 'ai',
-            'text': decodedResponse['response'],
+            'sender': 'Planner',
+            'text': decodedResponse['reply'],
           });
         });
       } else {
@@ -60,14 +60,14 @@ class _ChatPageState extends State<ChatPage> {
         children: <Widget>[
           Expanded(
             child: ListView.builder(
-              reverse: true, // To display the latest messages at the bottom
+              reverse: false, // To display the latest messages at the bottom
               itemCount: _messages.length,
               itemBuilder: (context, index) {
                 final message = _messages[index];
                 return ListTile(
                   title: Text(message['text']),
-                  subtitle: Text(message['sender']),
-                  leading: message['sender'] == 'user'
+                  subtitle: Text(message['sender'], style: TextStyle(color: Theme.of(context).colorScheme.primary),),
+                  leading: message['sender'] == 'User'
                       ? Icon(Icons.person)
                       : Icon(Icons.computer),
                 );
