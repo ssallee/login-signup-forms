@@ -21,7 +21,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text("My Awesome App"),
+        title: const Text("Home"),
       ),
       body: Container(
         /* decoration: const BoxDecoration(
@@ -115,7 +115,8 @@ class HomePageState extends State<HomePage> {
         title: "Calendar",
         subtitle: "March, Wednesday",
         event: "3 Events",
-        img: "assets/calendar.png",
+
+        icon: Icons.calendar_today_rounded,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -127,19 +128,19 @@ class HomePageState extends State<HomePage> {
         title: "AI Chat",
         subtitle: "Chat with our AI assistant",
         event: "",
-        img: "assets/map.png",
+        icon: Icons.chat_rounded,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const AssistantPage(),
+            builder: (context) => ChatPage(),
           ),
         ),
       ),
       Items(
-        title: "Locations",
-        subtitle: "Lucy Mao going to Office",
+        title: "Daily Schedule",
+        subtitle: "Daily Schedule Planner",
         event: "",
-        img: "assets/map.png",
+        icon: Icons.location_on,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -149,9 +150,9 @@ class HomePageState extends State<HomePage> {
       ),
       Items(
         title: "Activity",
-        subtitle: "Rose favirited your Post",
+        subtitle: "Upcoming Tasks",
         event: "",
-        img: "assets/festival.png",
+        icon: Icons.calendar_today_outlined,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -162,8 +163,8 @@ class HomePageState extends State<HomePage> {
       Items(
         title: "Settings",
         subtitle: "",
-        event: "2 Items",
-        img: "assets/setting.png",
+        event: "",
+        icon: Icons.settings,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -172,14 +173,14 @@ class HomePageState extends State<HomePage> {
         ),
       ),
       Items(
-        title: "Chat",
-        subtitle: "Rose favirited your Post",
+        title: "Assistant",
+        subtitle: "Assistant Page",
         event: "",
-        img: "assets/festival.png",
+        icon: Icons.calendar_today_rounded,
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>  ChatPage(),
+            builder: (context) =>  const AssistantPage(),
           ),
         ),
       ),
@@ -194,8 +195,8 @@ class HomePageState extends State<HomePage> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xff453658),
-                const Color(0xff453658).withOpacity(0.8),
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary.withOpacity(0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(10),
@@ -210,16 +211,13 @@ class HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Image.asset(
-                data.img,
-                width: 42,
-              ),
+              Icon(data.icon as IconData?, size: 42),
               const SizedBox(height: 14),
               Text(
                 data.title,
                 style: GoogleFonts.openSans(
                   textStyle: TextStyle(
-                    color: lightColorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -230,7 +228,7 @@ class HomePageState extends State<HomePage> {
                 data.subtitle,
                 style: GoogleFonts.openSans(
                   textStyle: TextStyle(
-                    color: lightColorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),
@@ -241,7 +239,7 @@ class HomePageState extends State<HomePage> {
                 data.event,
                 style: GoogleFonts.openSans(
                   textStyle: TextStyle(
-                    color: lightColorScheme.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -259,14 +257,14 @@ class Items {
   String title;
   String subtitle;
   String event;
-  String img;
+  IconData icon;
   VoidCallback onTap;
 
   Items({
     required this.title,
     required this.subtitle,
     required this.event,
-    required this.img,
+    required this.icon,
     required this.onTap,
   });
 }
