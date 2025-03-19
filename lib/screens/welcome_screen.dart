@@ -33,20 +33,20 @@ class WelcomeScreen extends StatelessWidget {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                                text: 'Welcome Back!\n',
+                                text: 'Welcome to IntelliDay\n',
                                 style: TextStyle(
                                   fontSize: screenHeight * 0.05, // 5% of screen height
                                   fontWeight: FontWeight.w600,
                                   color: Theme.of(context).colorScheme.onPrimary
                                 )),
-                            TextSpan(
+                           /*  TextSpan(
                                 text:
                                     '\nEnter personal details to your employee account',
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Theme.of(context).colorScheme.onPrimary
                                   // height: 0,
-                                ))
+                                )) */
                           ],
                         ),
                       ),

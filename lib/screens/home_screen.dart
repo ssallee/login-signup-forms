@@ -43,7 +43,7 @@ class HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "Planner", // Changed to "Planner"
+                        "IntelliDay", // Changed to App Title
                         style: GoogleFonts.openSans(
                           textStyle: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
